@@ -6,4 +6,6 @@ config.databaseId = "Polus";
 config.collectionId = "Items";
 config.collectionIdUsers = "Users";
 
+config.secret = process.env.SECRET || "supersecret";
+
 module.exports = config;

@@ -96,5 +96,25 @@ UserDao.prototype = {
                 callback(null, results[0]);
             }
         });
+    },
+
+    getUser: function (email, callback) {
+        const self = this;
+
+        const queryEmail = {
+            query: 'SELECT * FROM root r WHERE r.email = @email',
+            parameters: [{
+                name: '@email',
+                value: email
+            }]
+        };
+
+        self.client.queryDocuments(self.collection._self, queryEmail).toArray(function (err, results) {
+            if (err) {
+                callback(err);
+            } else {
+                callback(null, results[0]);
+            }
+        });
     }
 };
