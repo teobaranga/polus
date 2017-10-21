@@ -65,7 +65,11 @@ class Offices {
             self.officeDao.find(queryOffices, function (err, items) {
                 if (err) throw (err);
 
-                res.json(items.map(({company, name, state, address}) => ({company, name, state, address})));
+                if (items.length === 0) {
+                    res.status(204).json()
+                } else {
+                    res.json(items.map(({company, name, state, address}) => ({company, name, state, address})));
+                }
             });
         }
     }
