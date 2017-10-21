@@ -4,22 +4,28 @@ const UserSchemaSignUp = {
     required: ['firstName', 'lastName', 'email', 'password', 'homeAddress', 'officeAddress'],
     properties: {
         firstName: {
-            type: 'string'
+            type: 'string',
+            minLength: 1
         },
         lastName: {
-            type: 'string'
+            type: 'string',
+            minLength: 1
         },
         email: {
-            type: 'string'
+            type: 'string',
+            minLength: 3
         },
         password: {
-            type: 'string'
+            type: 'string',
+            minLength: 6
         },
         homeAddress: {
-            type: 'string'
+            type: 'string',
+            minLength: 5
         },
         officeAddress: {
-            type: 'string'
+            type: 'string',
+            minLength: 5
         }
     }
 };
