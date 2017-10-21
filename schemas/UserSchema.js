@@ -1,7 +1,7 @@
 // Define the JSON Schema for users
 const UserSchemaSignUp = {
     type: 'object',
-    required: ['firstName', 'lastName', 'email', 'password'],
+    required: ['firstName', 'lastName', 'email', 'password', 'address'],
     properties: {
         firstName: {
             type: 'string'
@@ -13,6 +13,9 @@ const UserSchemaSignUp = {
             type: 'string'
         },
         password: {
+            type: 'string'
+        },
+        address: {
             type: 'string'
         }
     }
