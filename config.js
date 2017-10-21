@@ -5,6 +5,7 @@ config.authKey = process.env.AUTH_KEY || "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QD
 config.databaseId = "Polus";
 config.collectionId = "Items";
 config.collectionIdUsers = "Users";
+config.collectionIdOffices = "Offices";
 
 config.secret = process.env.SECRET || "supersecret";
 

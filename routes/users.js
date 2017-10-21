@@ -22,7 +22,8 @@ class Users {
                     lastName: req.body.lastName,
                     email: req.body.email,
                     password: await bcrypt.hash(req.body.password, 10),
-                    address: req.body.address
+                    homeAddress: req.body.homeAddress,
+                    officeAddress: req.body.officeAddress
                 };
 
                 self.userDao.addItem(user, function (err) {

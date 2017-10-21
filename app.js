@@ -6,6 +6,9 @@ const TaskDao = require('./models/taskDao');
 const Users = require('./routes/users');
 const UserDao = require('./models/userDao');
 
+const Offices = require('./routes/offices');
+const OfficeDao = require('./models/officeDao');
+
 const express = require('express');
 const path = require('path');
 const favicon = require('serve-favicon');
@@ -49,10 +52,19 @@ const userDao = new UserDao(docDbClient, config.databaseId, config.collectionIdU
 const users = new Users(userDao);
 userDao.init();
 
+const officeDao = new OfficeDao(docDbClient, config.databaseId, config.collectionIdOffices);
+const offices = new Offices(officeDao);
+officeDao.init();
+
 /** Users */
 const usersRouter = express.Router();
 usersRouter.post('/signup', validate({body: UserSchema.signUp}), users.signUp.bind(users));
 usersRouter.post('/login', validate({body: UserSchema.logIn}), users.login.bind(users));
+
+/** Offices */
+const officesRouter = express.Router();
+officesRouter.post('/setup', offices.setup.bind(offices));
+officesRouter.get('/', offices.getOffices.bind(offices));
 
 router.get('/', taskList.showTasks.bind(taskList));
 router.post('/addtask', taskList.addTask.bind(taskList));
@@ -60,6 +72,7 @@ router.post('/completetask', taskList.completeTask.bind(taskList));
 // app.set('view engine', 'jade');
 
 router.use('/users', usersRouter);
+router.use('/offices', officesRouter);
 
 // REGISTER OUR ROUTES -------------------------------
 // all of our routes will be prefixed with /api
