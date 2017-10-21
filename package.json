@@ -1,6 +1,6 @@
 {
-  "name": "todo",
-  "version": "0.0.0",
+  "name": "polus",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
     "start": "set NODE_TLS_REJECT_UNAUTHORIZED=0&& node ./bin/www"

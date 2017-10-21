@@ -1,7 +1,5 @@
 const DocumentDBClient = require('documentdb').DocumentClient;
 const config = require('./config');
-const TaskList = require('./routes/tasklist');
-const TaskDao = require('./models/taskDao');
 
 const Users = require('./routes/users');
 const UserDao = require('./models/userDao');
@@ -44,9 +42,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 const docDbClient = new DocumentDBClient(config.host, {
     masterKey: config.authKey
 });
-const taskDao = new TaskDao(docDbClient, config.databaseId, config.collectionId);
-const taskList = new TaskList(taskDao);
-taskDao.init();
 
 const userDao = new UserDao(docDbClient, config.databaseId, config.collectionIdUsers);
 const users = new Users(userDao);
@@ -66,9 +61,6 @@ const officesRouter = express.Router();
 officesRouter.post('/setup', offices.setup.bind(offices));
 officesRouter.get('/', offices.getOffices.bind(offices));
 
-router.get('/', taskList.showTasks.bind(taskList));
-router.post('/addtask', taskList.addTask.bind(taskList));
-router.post('/completetask', taskList.completeTask.bind(taskList));
 // app.set('view engine', 'jade');
 
 router.use('/users', usersRouter);
