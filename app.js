@@ -51,7 +51,6 @@ userDao.init();
 
 /** Users */
 const usersRouter = express.Router();
-usersRouter.get('/', users.getAllUsers.bind(users));
 usersRouter.post('/signup', validate({body: UserSchema}), users.signUp.bind(users));
 
 router.get('/', taskList.showTasks.bind(taskList));

@@ -1,5 +1,4 @@
 const DocumentDBClient = require('documentdb').DocumentClient;
-const async = require('async');
 const bcrypt = require('bcrypt');
 
 class Users {
@@ -7,23 +6,7 @@ class Users {
         this.userDao = userDao;
     }
 
-    getAllUsers(req, res) {
-        const self = this;
-
-        const querySpec = {
-            query: 'SELECT * FROM root r'
-        };
-
-        self.userDao.find(querySpec, function (err, items) {
-            if (err) {
-                throw (err);
-            }
-
-            res.json(items);
-        });
-    }
-
-    signUp(req, res) {
+    async signUp(req, res) {
         const self = this;
 
         const queryEmail = {
@@ -34,27 +17,23 @@ class Users {
             }]
         };
 
-        self.userDao.find(queryEmail, function (err, items) {
+        self.userDao.find(queryEmail, async function (err, items) {
             if (err) throw (err);
 
             if (items.length > 0) {
                 res.status(406).json({message: "Email already exists"})
             } else {
-                bcrypt.hash(req.body.password, 10, function (err, hash) {
-                    if (err) throw err;
+                let user = {
+                    firstName: req.body.firstName,
+                    lastName: req.body.lastName,
+                    email: req.body.email,
+                    password: await bcrypt.hash(req.body.password, 10)
+                };
 
-                    let user = {
-                        firstName: req.body.firstName,
-                        lastName: req.body.lastName,
-                        email: req.body.email,
-                        password: hash
-                    };
+                self.userDao.addItem(user, function (err) {
+                    if (err) throw (err);
 
-                    self.userDao.addItem(user, function (err) {
-                        if (err) throw (err);
-
-                        res.status(201).json();
-                    });
+                    res.status(201).json();
                 });
             }
         });
