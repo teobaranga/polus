@@ -65,7 +65,7 @@ class Offices {
             self.officeDao.find(queryOffices, function (err, items) {
                 if (err) throw (err);
 
-                res.json(items);
+                res.json(items.map(({company, name, state, address}) => ({company, name, state, address})));
             });
         }
     }
