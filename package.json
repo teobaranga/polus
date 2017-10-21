@@ -5,6 +5,9 @@
   "scripts": {
     "start": "set NODE_TLS_REJECT_UNAUTHORIZED=0&& node ./bin/www"
   },
+  "engines": {
+    "node": "8.7.0"
+  },
   "dependencies": {
     "async": "^2.1.2",
     "bcrypt": "^1.0.3",
