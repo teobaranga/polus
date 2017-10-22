@@ -1,14 +1,10 @@
-const DocumentDBClient = require('documentdb').DocumentClient;
-const jwt = require('jsonwebtoken');
-const async = require("async");
-
 class Offices {
-    constructor(userDao) {
-        this.officeDao = userDao;
+    constructor(officeDao) {
+        this.officeDao = officeDao;
     }
 
     /** Populate the database with a default list of offices */
-    setup(req, res) {
+    async setup(req, res) {
         const self = this;
 
         const defaultOffices = [
@@ -26,51 +22,25 @@ class Offices {
             }
         ];
 
-        let calls = [];
+        let calls = defaultOffices.map(office => self.officeDao.add(office));
+        await Promise.all(calls);
 
-        defaultOffices.forEach(function (office) {
-            calls.push(function (callback) {
-                    self.officeDao.addItem(office, function (err) {
-                        if (err) return callback(err);
-
-                        callback(null, office);
-                    });
-                }
-            )
-        });
-
-        async.parallel(calls, function (err, result) {
-            /* this code will run after all calls finished the job or
-               when any of the calls passes an error */
-            if (err) throw err;
-
-            res.status(200).json();
-        });
+        res.status(200).json();
     }
 
-    getOffices(req, res) {
+    async getOffices(req, res) {
         if (!req.query.company) {
             res.status(400).send({message: "Please provide the company name"})
         } else {
             const self = this;
 
-            const queryOffices = {
-                query: 'SELECT * FROM root r WHERE r.company = @company',
-                parameters: [{
-                    name: '@company',
-                    value: req.query.company
-                }]
-            };
+            const offices = await self.officeDao.getByCompany(req.query.company);
 
-            self.officeDao.find(queryOffices, function (err, items) {
-                if (err) throw (err);
-
-                if (items.length === 0) {
-                    res.status(204).json()
-                } else {
-                    res.json(items.map(({company, name, state, address}) => ({company, name, state, address})));
-                }
-            });
+            if (offices.length === 0) {
+                res.status(204).json()
+            } else {
+                res.json(offices.map(({company, name, state, address}) => ({company, name, state, address})));
+            }
         }
     }
 }
