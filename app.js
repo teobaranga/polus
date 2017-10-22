@@ -7,6 +7,9 @@ const UserDao = require('./models/userDao');
 const Offices = require('./routes/offices');
 const OfficeDao = require('./models/officeDao');
 
+const Groups = require('./routes/groups');
+const GroupDao = require('./models/groupDao');
+
 const express = require('express');
 const path = require('path');
 const favicon = require('serve-favicon');
@@ -14,9 +17,10 @@ const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 
-const { Validator, ValidationError } = require('express-json-validator-middleware');
+const {Validator, ValidationError} = require('express-json-validator-middleware');
 
 const UserSchema = require('./schemas/UserSchema');
+const GroupSchema = require('./schemas/GroupSchema');
 
 const app = express();
 const router = express.Router(); // get an instance of the express Router
@@ -51,6 +55,10 @@ const officeDao = new OfficeDao(docDbClient, config.databaseId, config.collectio
 const offices = new Offices(officeDao);
 officeDao.init();
 
+const groupDao = new GroupDao(docDbClient, config.databaseId, config.collectionIdGroups);
+const groups = new Groups(userDao, groupDao);
+groupDao.init();
+
 /** Users */
 const usersRouter = express.Router();
 usersRouter.post('/signup', validate({body: UserSchema.signUp}), users.signUp.bind(users));
@@ -61,10 +69,15 @@ const officesRouter = express.Router();
 officesRouter.post('/setup', offices.setup.bind(offices));
 officesRouter.get('/', offices.getOffices.bind(offices));
 
+/** Groups */
+const groupsRouter = express.Router();
+groupsRouter.post('/', validate({body: GroupSchema.create}), groups.createGroup.bind(groups));
+
 // app.set('view engine', 'jade');
 
 router.use('/users', usersRouter);
 router.use('/offices', officesRouter);
+router.use('/groups', groupsRouter);
 
 // REGISTER OUR ROUTES -------------------------------
 // all of our routes will be prefixed with /api
@@ -94,7 +107,7 @@ app.use(function (err, req, res, next) {
         });
     } else {
         res.status(err.status || 500);
-        res.json({ message: "You messed up"});
+        res.json({message: err.message});
     }
 });
 
