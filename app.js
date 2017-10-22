@@ -1,4 +1,5 @@
 const DocumentDBClient = require('documentdb').DocumentClient;
+const DB = require("documentdb-typescript");
 const config = require('./config');
 
 const Users = require('./routes/users');
@@ -42,7 +43,8 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-//Todo App:
+const db = new DB.Database(config.databaseId, config.host, config.authKey);
+
 const docDbClient = new DocumentDBClient(config.host, {
     masterKey: config.authKey
 });
@@ -55,7 +57,7 @@ const officeDao = new OfficeDao(docDbClient, config.databaseId, config.collectio
 const offices = new Offices(officeDao);
 officeDao.init();
 
-const groupDao = new GroupDao(docDbClient, config.databaseId, config.collectionIdGroups);
+const groupDao = new GroupDao(db, config.collectionIdGroups);
 const groups = new Groups(userDao, groupDao);
 groupDao.init();
 
