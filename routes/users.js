@@ -48,13 +48,15 @@ class Users {
             if (!user) return res.status(404).send('No user found.');
 
             const passwordIsValid = bcrypt.compareSync(req.body.password, user.password);
-            if (!passwordIsValid) return res.status(401).send({ auth: false, token: null });
+            if (!passwordIsValid) return res.status(401).send({auth: false, token: null});
 
-            const token = jwt.sign({ id: user.id }, config.secret, {
+            const token = jwt.sign({id: user.id}, config.secret, {
                 expiresIn: 86400 // expires in 24 hours
             });
 
-            res.status(200).send({ auth: true, token: token });
+            const {firstName, lastName, homeAddress, officeAddress} = user;
+
+            res.status(200).send({auth: true, token: token, user: {firstName, lastName, homeAddress, officeAddress}});
         });
     }
 }
